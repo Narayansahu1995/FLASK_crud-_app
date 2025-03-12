@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">School List</h1>
+        
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#schoolModal">Add School</button>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for school in schools %}
+                <tr>
+                    <td>{{ school.id }}</td>
+                    <td>{{ school.name }}</td>
+                    <td>{{ school.address }}</td>
+                    <td>{{ school.email }}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#schoolModaledit"
+                        data-id="{{ school.id }}" data-name="{{ school.name }}" data-address="{{ school.address }}" data-email="{{ school.email }}">
+                    Edit
+                </button>
+                        <a href="{{ url_for('delete_school', id=school.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this school?');">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="schoolModal" tabindex="-1" aria-labelledby="schoolModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="schoolModalLabel">Add/Edit School</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="schoolForm" method="POST" action="{{ url_for('add_school') }}">
+                        <input type="hidden" name="id" id="schoolId">
+                        <div class="form-group">
+                            <label for="schoolName">Name</label>
+                            <input type="text" class="form-control" id="schoolName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="schoolAddress">Address</label>
+                            <input type="text" class="form-control" id="schoolAddress" name="address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="schoolEmail">Email</label>
+                            <input type="email" class="form-control" id="schoolEmail" name="email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <!--edit  Modal -->
+        <div class="modal fade" id="schoolModaledit" tabindex="-1" aria-labelledby="schoolModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="schoolModalLabel">Edit School</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="schoolForm" method="POST" action="{{ url_for('update_school') }}">
+                            <input type="hidden" name="id" id="schoolId">
+                            <div class="form-group">
+                                <label for="schoolName">Name</label>
+                                <input type="text" class="form-control" id="schoolName" name="name" value ="{{name}}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="schoolAddress">Address</label>
+                                <input type="text" class="form-control" id="schoolAddress" name="address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="schoolEmail">Email</label>
+                                <input type="email" class="form-control" id="schoolEmail" name="email" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $('#schoolModaledit').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var modal = $(this);
+                var schoolId = button.data('id');
+                var schoolName = button.data('name');
+                var schoolAddress = button.data('address');
+                var schoolEmail = button.data('email');
+    
+                modal.find('.modal-title').text('Edit School');
+                modal.find('#schoolId').val(schoolId);
+                modal.find('#schoolName').val(schoolName);
+                modal.find('#schoolAddress').val(schoolAddress);
+                modal.find('#schoolEmail').val(schoolEmail);
+            });
+        </script>
+    <!-- Bootstrap JS and dependencies -->
+   
+  
+</body>
+</html>
