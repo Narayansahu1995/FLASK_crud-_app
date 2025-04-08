@@ -26,10 +26,10 @@ school = [
 ]
 
 
-def get_new_id():
-    new_id = random.randint(1, 100)
-    print(new_id)
-    return new_id
+# def get_new_id():
+#     new_id = random.randint(1, 100)
+#     print(new_id)
+#     return new_id
 
 def connect():
     conn = psycopg2.connect(
@@ -62,6 +62,8 @@ def insert(sc):
         host="localhost",
         port="5432"
     )
+
+  
     cur = conn.cursor()
     cur.execute("INSERT INTO school (name, email, address) VALUES (%s, %s, %s)", (sc.name, sc.email, sc.address))
     conn.commit()
@@ -123,3 +125,38 @@ def delete_all():
     cur.execute("DELETE FROM school")
     conn.commit()
     conn.close()
+
+def get_school_by_email(email):
+    conn = psycopg2.connect(
+        dbname="Flask",
+        user="postgres",
+        password="root",
+        host="localhost",
+        port="5432"
+    )
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM school WHERE email = %s", (email,))
+    row = cur.fetchone()
+    conn.close()
+    if row:
+        return School(row[0], row[1], row[2], row[3])
+    else:
+        return None
+    
+
+def school_login():
+    conn = psycopg2.connect(
+        dbname="Flask",
+        user="postgres",
+        password="root",
+        host="localhost",
+        port="5432"
+    )
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM school WHERE email = %s AND password = %s", (email, password))
+    row = cur.fetchone()
+    conn.close()
+    if row:
+        return School(row[0], row[1], row[2], row[3])
+    else:
+        return None
